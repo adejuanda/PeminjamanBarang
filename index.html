@@ -3,82 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peminjaman Alat Sekolah</title>
+  <title>Sistem Peminjaman Barang - SMAN 10 Pandeglang</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-slate-100 min-h-screen p-4 md:p-8">
-  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-slate-800">Sistem Peminjaman Sarpras</h1>
-      <p class="text-gray-500 text-sm">Fasilitas Penunjang Pembelajaran Sekolah</p>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between p-3 sm:p-6 md:p-10">
+
+  <!-- Container Utama -->
+  <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+    
+    <!-- Header / Branding -->
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-6 text-white text-center shadow-md">
+      <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-full mb-3 backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Sistem Peminjaman Barang</h1>
+      <p class="text-blue-100 text-sm sm:text-base font-medium mt-1">SMAN 10 Pandeglang</p>
     </div>
 
-    <!-- Tab Navigasi -->
-    <div class="flex border-b mb-6">
-      <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="w-1/2 py-2 font-semibold text-blue-600 border-b-2 border-blue-600 transition">Pinjam Barang</button>
-      <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="w-1/2 py-2 font-semibold text-gray-500 hover:text-green-600 transition">Kembalikan Barang</button>
+    <div class="p-5 sm:p-8">
+      <!-- Tab Navigasi -->
+      <div class="flex rounded-xl bg-slate-100 p-1 mb-6">
+        <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-blue-700 bg-white shadow-sm transition-all duration-200">
+          📌 Pinjam Barang
+        </button>
+        <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-green-700 transition-all duration-200">
+          🔄 Kembalikan Barang
+        </button>
+      </div>
+
+      <!-- Indicator Loading -->
+      <div id="loading" class="hidden text-center py-6">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+        <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium">Memproses data ke sistem...</p>
+      </div>
+
+      <!-- Pesan Status / Alert -->
+      <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium text-center shadow-sm"></div>
+
+      <!-- Form Pinjam Barang -->
+      <form id="formPinjam" class="space-y-4" onsubmit="handlePinjam(event)">
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap</label>
+          <input type="text" id="namaPinjam" required placeholder="Masukkan Nama Lengkap Anda" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Peran / Jabatan</label>
+          <select id="peranPinjam" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+            <option value="Guru">Guru</option>
+            <option value="Siswa">Siswa</option>
+            <option value="Staf / Karyawan">Staf / Karyawan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Pilih Barang Tersedia</label>
+          <select id="barangPinjam" required class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white">
+            <option value="">Memuat daftar barang...</option>
+          </select>
+        </div>
+        <button type="submit" id="btnPinjamSubmit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition shadow-md hover:shadow-lg text-xs sm:text-sm mt-2">
+          Kirim Permohonan Pinjam
+        </button>
+      </form>
+
+      <!-- Form Pengembalian Barang -->
+      <form id="formKembali" class="space-y-4 hidden" onsubmit="handleKembali(event)">
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Pilih Barang yang Dikembalikan</label>
+          <select id="barangKembali" required class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition bg-white">
+            <option value="">Memuat daftar barang dipinjam...</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Foto Bukti Pengembalian</label>
+          <input type="file" id="fotoBukti" accept="image/*" capture="environment" required class="w-full text-xs sm:text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border rounded-lg p-1">
+          <p class="text-[11px] text-slate-400 mt-1">*Bisa langsung ambil foto via kamera HP.</p>
+        </div>
+        <div>
+          <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Catatan Kondisi / Kelengkapan (Opsional)</label>
+          <textarea id="catatan" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" rows="2" placeholder="Contoh: Kondisi fisik mulus, kabel lengkap"></textarea>
+        </div>
+        <button type="submit" id="btnKembaliSubmit" class="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 active:bg-green-800 transition shadow-md hover:shadow-lg text-xs sm:text-sm mt-2">
+          Proses Pengembalian
+        </button>
+      </form>
     </div>
-
-    <!-- Loading Overlay -->
-    <div id="loading" class="hidden text-center py-4">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-      <p class="text-sm text-gray-600 mt-2">Memproses data...</p>
-    </div>
-
-    <!-- Alert / Status -->
-    <div id="statusMessage" class="hidden mb-4 p-3 rounded-md text-sm font-semibold text-center"></div>
-
-    <!-- Form Pinjam -->
-    <form id="formPinjam" class="space-y-4" onsubmit="handlePinjam(event)">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-        <input type="text" id="namaPinjam" required placeholder="Contoh: Budi Santoso, S.Pd / Ahmad (X-IPA 1)" class="w-full rounded-md border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Peran</label>
-        <select id="peranPinjam" class="w-full rounded-md border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
-          <option value="Guru">Guru</option>
-          <option value="Siswa">Siswa</option>
-          <option value="Staf / Karyawan">Staf / Karyawan</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Barang yang Tersedia</label>
-        <select id="barangPinjam" required class="w-full rounded-md border-gray-300 border p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
-          <option value="">Memuat daftar barang...</option>
-        </select>
-      </div>
-      <button type="submit" id="btnPinjamSubmit" class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-md hover:bg-blue-700 transition">Proses Peminjaman</button>
-    </form>
-
-    <!-- Form Pengembalian -->
-    <form id="formKembali" class="space-y-4 hidden" onsubmit="handleKembali(event)">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Barang yang Dikembalikan</label>
-        <select id="barangKembali" required class="w-full rounded-md border-gray-300 border p-2.5 focus:ring-2 focus:ring-green-500 outline-none">
-          <option value="">Memuat barang dipinjam...</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Foto Bukti Pengembalian Fisik</label>
-        <input type="file" id="fotoBukti" accept="image/*" capture="environment" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border rounded-md p-1">
-        <p class="text-xs text-gray-400 mt-1">*Di HP akan langsung membuka kamera belakang.</p>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Kondisi / Kelengkapan (Opsional)</label>
-        <textarea id="catatan" class="w-full rounded-md border-gray-300 border p-2.5 focus:ring-2 focus:ring-green-500 outline-none" rows="2" placeholder="Contoh: Barang baik, remote & kabel lengkap"></textarea>
-      </div>
-      <button type="submit" id="btnKembaliSubmit" class="w-full bg-green-600 text-white font-medium py-2.5 rounded-md hover:bg-green-700 transition">Proses Pengembalian</button>
-    </form>
   </div>
+
+  <!-- Footer Developer -->
+  <footer class="mt-8 text-center text-xs text-slate-500 space-y-1">
+    <p class="font-medium">© SMAN 10 Pandeglang</p>
+    <p class="text-slate-400">Developer: <span class="font-semibold text-slate-600">M. Fauzi Utama</span> & <span class="font-semibold text-slate-600">Ade Juanda</span></p>
+  </footer>
 
   <script>
     // MASUKKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI SINI
-    const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec"; 
+    const API_URL = "PASTE_URL_WEB_APP_ANDA_DI_SINI"; 
 
     let listBarang = [];
 
-    // Fungsi Load Data Menggunakan JSONP (Tembus CORS / Block)
     function loadData() {
       showLoading(true);
       const script = document.createElement('script');
@@ -98,7 +128,6 @@
       } else {
         showStatus("Gagal mengambil data barang.", true);
       }
-      // Hapus tag script sementara
       const oldScript = document.querySelector(`script[src*="getBarang"]`);
       if (oldScript) oldScript.remove();
     }
@@ -132,13 +161,13 @@
       if (tab === 'pinjam') {
         document.getElementById("formPinjam").classList.remove("hidden");
         document.getElementById("formKembali").classList.add("hidden");
-        document.getElementById("tabPinjamBtn").className = "w-1/2 py-2 font-semibold text-blue-600 border-b-2 border-blue-600 transition";
-        document.getElementById("tabKembaliBtn").className = "w-1/2 py-2 font-semibold text-gray-500 hover:text-green-600 transition";
+        document.getElementById("tabPinjamBtn").className = "flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-blue-700 bg-white shadow-sm transition-all duration-200";
+        document.getElementById("tabKembaliBtn").className = "flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-green-700 transition-all duration-200";
       } else {
         document.getElementById("formPinjam").classList.add("hidden");
         document.getElementById("formKembali").classList.remove("hidden");
-        document.getElementById("tabKembaliBtn").className = "w-1/2 py-2 font-semibold text-green-600 border-b-2 border-green-600 transition";
-        document.getElementById("tabPinjamBtn").className = "w-1/2 py-2 font-semibold text-gray-500 hover:text-blue-600 transition";
+        document.getElementById("tabKembaliBtn").className = "flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-green-700 bg-white shadow-sm transition-all duration-200";
+        document.getElementById("tabPinjamBtn").className = "flex-1 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-blue-700 transition-all duration-200";
       }
     }
 
@@ -241,7 +270,7 @@
     function showStatus(msg, isError) {
       const el = document.getElementById("statusMessage");
       el.innerText = msg;
-      el.className = `mb-4 p-3 rounded-md text-sm font-semibold text-center ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+      el.className = `mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium text-center shadow-sm ${isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`;
       el.classList.remove("hidden");
     }
 
