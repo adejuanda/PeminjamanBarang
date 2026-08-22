@@ -73,31 +73,34 @@
   </div>
 
   <script>
-    // MASUKKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI DI SINI
+    // MASUKKAN URL DEPLOYMENT GOOGLE APPS SCRIPT ANDA DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec"; 
 
     let listBarang = [];
 
-    async function loadData() {
+    // Fungsi Load Data Menggunakan JSONP (Tembus CORS / Block)
+    function loadData() {
       showLoading(true);
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify({ action: "getBarang" })
-        });
-        const result = await res.json();
-        if (result.status === "success") {
-          listBarang = result.data;
-          renderSelects();
-        } else {
-          showStatus("Gagal mengambil data barang.", true);
-        }
-      } catch (e) {
-        showStatus("Koneksi gagal / URL API belum diatur.", true);
-      } finally {
+      const script = document.createElement('script');
+      script.src = `${API_URL}?action=getBarang&callback=handleDataResponse`;
+      script.onerror = function() {
         showLoading(false);
+        showStatus("Gagal terhubung ke server Google Sheets.", true);
+      };
+      document.body.appendChild(script);
+    }
+
+    function handleDataResponse(result) {
+      showLoading(false);
+      if (result.status === "success") {
+        listBarang = result.data;
+        renderSelects();
+      } else {
+        showStatus("Gagal mengambil data barang.", true);
       }
+      // Hapus tag script sementara
+      const oldScript = document.querySelector(`script[src*="getBarang"]`);
+      if (oldScript) oldScript.remove();
     }
 
     function renderSelects() {
@@ -165,7 +168,7 @@
         if (result.status === "success") {
           showStatus("✅ " + result.message, false);
           document.getElementById("formPinjam").reset();
-          await loadData();
+          loadData();
         } else {
           showStatus("❌ " + result.message, true);
         }
@@ -215,7 +218,7 @@
           if (result.status === "success") {
             showStatus("✅ " + result.message, false);
             document.getElementById("formKembali").reset();
-            await loadData();
+            loadData();
           } else {
             showStatus("❌ " + result.message, true);
           }
