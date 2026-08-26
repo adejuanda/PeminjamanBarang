@@ -2,211 +2,275 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Peminjaman Barang - SMAN 10 Pandeglang</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistem Peminjaman - SMAN 10 Pandeglang</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: #f5f5f7; /* Warna latar khas minimalis */
+      color: #1d1d1f; 
+      -webkit-font-smoothing: antialiased;
+    }
+    .glass-card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.04);
+    }
+    .input-field {
+      background-color: #f5f5f7;
+      border: 1.5px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .input-field:focus {
+      background-color: #ffffff;
+      border-color: #007AFF;
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+      outline: none;
+    }
+    .btn-primary {
+      background-color: #007AFF;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover { background-color: #0066CC; }
+    .btn-primary:active { transform: scale(0.98); }
+    
+    /* Segmented Control untuk Tab */
+    .segmented-control {
+      background-color: rgba(118, 118, 128, 0.12);
+      border-radius: 12px;
+      padding: 3px;
+    }
+    .segment-btn {
+      border-radius: 9px;
+      transition: all 0.2s ease;
+    }
+    .segment-active {
+      background-color: #ffffff;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+      color: #1d1d1f;
+      font-weight: 600;
+    }
+    .segment-inactive {
+      color: #86868b;
+      font-weight: 500;
+    }
+    .segment-inactive:hover { color: #1d1d1f; }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col justify-between p-3 sm:p-6 md:p-10">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
 
   <!-- Container Utama -->
-  <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+  <div class="w-full max-w-2xl glass-card overflow-hidden">
     
-    <!-- Header / Branding -->
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-6 text-white text-center shadow-md relative">
-      <div id="userInfoHeader" class="hidden absolute top-4 right-4 text-xs bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center space-x-2">
-        <span>👤 <strong id="userDisplayName">User</strong></span>
-        <button onclick="handleLogout()" class="ml-2 text-red-200 hover:text-white font-bold underline">Logout</button>
+    <!-- Header (Minimalist) -->
+    <div class="px-8 pt-10 pb-6 text-center relative">
+      <!-- User Badge (Hidden by default) -->
+      <div id="userInfoHeader" class="hidden absolute top-6 right-6 flex items-center space-x-3 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+        <span class="text-xs font-medium text-gray-600" id="userDisplayName">User</span>
+        <button onclick="handleLogout()" class="text-xs font-semibold text-red-500 hover:text-red-700 transition">Keluar</button>
       </div>
-      <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-full mb-3 backdrop-blur-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-      </div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Sistem Peminjaman Barang</h1>
-      <p class="text-blue-100 text-sm sm:text-base font-medium mt-1">SMAN 10 Pandeglang</p>
+
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1d1d1f]">Peminjaman Barang</h1>
+      <p class="text-[15px] text-gray-500 font-medium mt-1">SMAN 10 Pandeglang</p>
     </div>
 
-    <div class="p-5 sm:p-8">
+    <div class="px-6 sm:px-10 pb-10">
       
-      <!-- SCREEN 1: LOGIN USER -->
-      <div id="loginScreen" class="space-y-4">
-        <div class="text-center mb-6">
-          <h2 class="text-xl font-bold text-slate-800">Masuk ke Sistem</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Silakan verifikasi Nama & Tanggal Lahir Anda</p>
-        </div>
-        <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4 max-w-md mx-auto">
+      <!-- SCREEN 1: LOGIN -->
+      <div id="loginScreen" class="animate-fade-in transition-all duration-300">
+        <p class="text-sm text-gray-500 text-center mb-8">Silakan identifikasi diri Anda untuk melanjutkan.</p>
+        
+        <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-5 max-w-sm mx-auto">
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Nama Pengguna</label>
-            <input type="text" id="loginNama" required placeholder="Masukkan Nama (contoh: Jajan / Aan)" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+            <input type="text" id="loginNama" required placeholder="Contoh: Jajan / Aan" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Tanggal Lahir (DD-MM-YYYY)</label>
-            <input type="text" id="loginTglLahir" required placeholder="Contoh: 03-07-1984" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Tanggal Lahir</label>
+            <input type="text" id="loginTglLahir" required placeholder="DD-MM-YYYY (Contoh: 03-07-1984)" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
-          <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition shadow-md text-xs sm:text-sm">
-            Masuk / Login
+          <button type="submit" class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl mt-2 text-[15px]">
+            Masuk
           </button>
         </form>
       </div>
 
-      <!-- SCREEN 2: DASHBOARD (PINJAM / KEMBALI / DAFTAR STATUS) -->
-      <div id="mainScreen" class="hidden">
-        <!-- Tab Navigasi (3 Menu) -->
-        <div class="flex rounded-xl bg-slate-100 p-1 mb-6">
-          <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-blue-700 bg-white shadow-sm transition">
-            Pinjam Barang
+      <!-- SCREEN 2: DASHBOARD -->
+      <div id="mainScreen" class="hidden transition-all duration-300">
+        
+        <!-- Segmented Control (Tabs) -->
+        <div class="segmented-control flex mb-8">
+          <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 py-2 text-[14px] segment-btn segment-active">
+            Pinjam
           </button>
-          <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-green-700 transition">
-            Kembalikan Barang
+          <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="flex-1 py-2 text-[14px] segment-btn segment-inactive">
+            Kembalikan
           </button>
-          <button id="tabStatusBtn" onclick="switchTab('status')" class="hidden flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-purple-700 transition">
-            Daftar Status (Admin)
+          <button id="tabStatusBtn" onclick="switchTab('status')" class="hidden flex-1 py-2 text-[14px] segment-btn segment-inactive">
+            Status
           </button>
         </div>
 
         <!-- Indicator Loading -->
-        <div id="loading" class="hidden text-center py-6">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-          <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium">Memproses data ke sistem...</p>
+        <div id="loading" class="hidden text-center py-8">
+          <svg class="animate-spin h-8 w-8 text-[#007AFF] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          <p class="text-[13px] text-gray-500 mt-3 font-medium">Menyinkronkan data...</p>
         </div>
 
-        <!-- Pesan Status / Alert -->
-        <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium text-center shadow-sm"></div>
+        <!-- Global Status Notification -->
+        <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-[14px] font-medium text-center"></div>
 
         <!-- Form 1: Pinjam Barang -->
-        <form id="formPinjam" class="space-y-4" onsubmit="handlePinjam(event)">
-          <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Nama Peminjam</label>
-            <input type="text" id="namaPinjam" readonly class="w-full rounded-lg border-slate-200 border p-2.5 sm:p-3 text-xs sm:text-sm bg-slate-50 font-semibold text-slate-700">
+        <form id="formPinjam" class="space-y-5" onsubmit="handlePinjam(event)">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-[13px] font-semibold text-gray-700 mb-2">Nama Peminjam</label>
+              <input type="text" id="namaPinjam" readonly class="w-full bg-gray-50 border border-gray-100 p-3.5 rounded-xl text-[15px] font-medium text-gray-500 cursor-not-allowed">
+            </div>
+            <div>
+              <label class="block text-[13px] font-semibold text-gray-700 mb-2">Peran</label>
+              <select id="peranPinjam" class="w-full input-field p-3.5 rounded-xl text-[15px]">
+                <option value="Guru">Guru</option>
+                <option value="Staf / Karyawan">Staf / Karyawan</option>
+                <option value="Siswa">Siswa</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Peran / Jabatan</label>
-            <select id="peranPinjam" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-              <option value="Guru">Guru</option>
-              <option value="Staf / Karyawan">Staf / Karyawan</option>
-              <option value="Siswa">Siswa</option>
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Pilih Barang</label>
+            <select id="barangPinjam" required class="w-full input-field p-3.5 rounded-xl text-[15px]">
+              <option value="">Memuat data...</option>
             </select>
           </div>
-          <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Pilih Barang Tersedia</label>
-            <select id="barangPinjam" required class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-              <option value="">Memuat daftar barang...</option>
-            </select>
-          </div>
-          <button type="submit" id="btnPinjamSubmit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition shadow-md text-xs sm:text-sm">
-            Kirim Permohonan Pinjam
+          <button type="submit" id="btnPinjamSubmit" class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl text-[15px] mt-2">
+            Ajukan Peminjaman
           </button>
         </form>
 
         <!-- Form 2: Pengembalian Barang -->
-        <form id="formKembali" class="space-y-4 hidden" onsubmit="handleKembali(event)">
+        <form id="formKembali" class="space-y-5 hidden" onsubmit="handleKembali(event)">
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Pilih Barang yang Dikembalikan</label>
-            <select id="barangKembali" required class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-green-500 outline-none bg-white">
-              <option value="">Memuat daftar barang dipinjam...</option>
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Barang yang Dikembalikan</label>
+            <select id="barangKembali" required class="w-full input-field p-3.5 rounded-xl text-[15px]">
+              <option value="">Memuat data...</option>
             </select>
           </div>
 
-          <!-- Akses Kamera Langsung (Blocked File Explorer Upload) -->
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Ambil Foto Bukti Fisik (Langsung Kamera)</label>
-            <input type="file" id="fotoBukti" accept="image/*" capture="camera" required class="w-full text-xs sm:text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border rounded-lg p-1">
-            <p class="text-[11px] text-amber-600 font-medium mt-1">⚠️ Pengambilan foto wajib secara langsung via kamera HP/Laptop (Upload galeri/file diblokir & dikompres otomatis max 300 KB).</p>
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Foto Bukti (Kamera Langsung)</label>
+            <!-- Menggunakan capture="environment" agar kamera belakang aktif secara default -->
+            <input type="file" id="fotoBukti" accept="image/*" capture="environment" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-xl p-1 bg-white">
+            <p class="text-[12px] text-gray-400 mt-2 leading-relaxed">Foto diambil langsung via kamera perangkat untuk verifikasi waktu nyata.</p>
           </div>
 
           <div>
-            <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Catatan Kondisi / Kelengkapan (Opsional)</label>
-            <textarea id="catatan" class="w-full rounded-lg border-slate-300 border p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-green-500 outline-none" rows="2" placeholder="Contoh: Kondisi fisik mulus, kabel lengkap"></textarea>
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Catatan Kondisi (Opsional)</label>
+            <textarea id="catatan" class="w-full input-field p-3.5 rounded-xl text-[15px]" rows="2" placeholder="Cth: Kelengkapan utuh, berfungsi normal"></textarea>
           </div>
-          <button type="submit" id="btnKembaliSubmit" class="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition shadow-md text-xs sm:text-sm">
+          <button type="submit" id="btnKembaliSubmit" class="w-full bg-[#34C759] hover:bg-[#2EB150] transition text-white font-semibold py-3.5 rounded-xl text-[15px] mt-2 active:scale-[0.98]">
             Proses Pengembalian
           </button>
         </form>
 
-        <!-- Menu 3: Daftar Status Barang (Khusus Super Admin: Jajan) -->
-        <div id="sectionStatus" class="space-y-4 hidden">
-          <div class="flex justify-between items-center bg-purple-50 p-3 rounded-xl border border-purple-200">
-            <h3 class="text-xs sm:text-sm font-bold text-purple-900">👑 Dashboard Pemantauan Barang (Super Admin)</h3>
-            <button onclick="loadData()" class="text-xs bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700">Refresh Data</button>
+        <!-- Menu 3: Status Barang (Admin) -->
+        <div id="sectionStatus" class="hidden">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-[15px] font-semibold text-gray-800">Inventaris Sistem</h3>
+            <button onclick="loadData()" class="text-[12px] font-medium text-[#007AFF] hover:underline">Perbarui Data</button>
           </div>
           
-          <div class="overflow-x-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-left border-collapse text-xs sm:text-sm">
-              <thead>
-                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                  <th class="p-3">ID Barang</th>
-                  <th class="p-3">Nama Barang</th>
-                  <th class="p-3 text-center">Status Barang</th>
+          <div class="border border-gray-100 rounded-2xl overflow-hidden bg-white">
+            <table class="w-full text-left text-[14px]">
+              <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th class="p-4 font-semibold text-gray-600">ID</th>
+                  <th class="p-4 font-semibold text-gray-600">Nama Barang</th>
+                  <th class="p-4 font-semibold text-gray-600 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody id="tableStatusBody" class="divide-y divide-slate-100">
-                <!-- Dynamic Content -->
+              <tbody id="tableStatusBody" class="divide-y divide-gray-50">
+                <!-- Data dinamis -->
               </tbody>
             </table>
           </div>
         </div>
 
       </div>
-
     </div>
   </div>
 
-  <!-- Footer Developer -->
-  <footer class="mt-8 text-center text-xs text-slate-500 space-y-1">
-    <p class="font-medium">© SMAN 10 Pandeglang</p>
-    <p class="text-slate-400">Developed by: <span class="font-semibold text-slate-600">M. Fauzi Utama</span> & <span class="font-semibold text-slate-600">Ade Juanda</span></p>
+  <!-- Footer -->
+  <footer class="mt-8 text-center space-y-1 opacity-60">
+    <p class="text-[12px] font-medium text-gray-500">Dikembangkan oleh</p>
+    <p class="text-[13px] font-semibold text-gray-700">M. Fauzi Utama & Ade Juanda</p>
   </footer>
 
   <script>
+    // ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP DEPLOYMENT ANDA YANG BARU
     const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec"; 
+    
     let listBarang = [];
     let currentUser = null;
 
-    // Login Handle
+    // --- Utilitas Keamanan & Jaringan (Promise-based JSONP) ---
+    // Mengganti cara JSONP tradisional yang rawan error dengan pola Promise yang bersih
+    function fetchJSONP(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        const script = document.createElement('script');
+        
+        window[callbackName] = function(data) {
+          delete window[callbackName];
+          document.body.removeChild(script);
+          resolve(data);
+        };
+        
+        script.src = `${url}&callback=${callbackName}`;
+        script.onerror = () => {
+          delete window[callbackName];
+          document.body.removeChild(script);
+          reject(new Error('Koneksi ke server gagal.'));
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    // --- Core Functions ---
     async function handleLogin(e) {
       e.preventDefault();
       const nama = document.getElementById("loginNama").value.trim();
       const tglLahir = document.getElementById("loginTglLahir").value.trim();
 
       showLoading(true);
-      
-      // JSONP verifikasi login
-      const script = document.createElement('script');
-      script.src = `${API_URL}?action=login&nama=${encodeURIComponent(nama)}&tglLahir=${encodeURIComponent(tglLahir)}&callback=handleLoginResponse`;
-      script.onerror = function() {
-        showLoading(false);
-        alert("Gagal terhubung ke server verifikasi login.");
-      };
-      document.body.appendChild(script);
-    }
+      try {
+        const res = await fetchJSONP(`${API_URL}?action=login&nama=${encodeURIComponent(nama)}&tglLahir=${encodeURIComponent(tglLahir)}`);
+        
+        if (res.status === "success") {
+          currentUser = res.user;
+          document.getElementById("loginScreen").classList.add("hidden");
+          document.getElementById("mainScreen").classList.remove("hidden");
+          document.getElementById("userInfoHeader").classList.remove("hidden");
+          
+          // Potong nama depan agar UI tetap rapi jika nama terlalu panjang
+          document.getElementById("userDisplayName").innerText = currentUser.nama.split(' ')[0];
+          document.getElementById("namaPinjam").value = currentUser.nama;
 
-    function handleLoginResponse(res) {
-      showLoading(false);
-      const oldScript = document.querySelector(`script[src*="action=login"]`);
-      if (oldScript) oldScript.remove();
-
-      if (res.status === "success") {
-        currentUser = res.user;
-        document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("mainScreen").classList.remove("hidden");
-        document.getElementById("userInfoHeader").classList.remove("hidden");
-        document.getElementById("userDisplayName").innerText = currentUser.nama;
-        document.getElementById("namaPinjam").value = currentUser.nama;
-
-        // Cek jika Super Admin (Jajan)
-        if (currentUser.isSuperAdmin) {
-          document.getElementById("tabStatusBtn").classList.remove("hidden");
+          if (currentUser.isSuperAdmin) {
+            document.getElementById("tabStatusBtn").classList.remove("hidden");
+            document.getElementById("tabStatusBtn").classList.add("flex-1");
+          } else {
+            document.getElementById("tabStatusBtn").classList.add("hidden");
+          }
+          loadData();
         } else {
-          document.getElementById("tabStatusBtn").classList.add("hidden");
+          alert("Kredensial tidak valid. Silakan periksa kembali.");
         }
-
-        loadData();
-      } else {
-        alert("❌ " + res.message);
+      } catch (err) {
+        alert("Gagal terhubung. Pastikan URL Web App sudah benar dan ada koneksi internet.");
+      } finally {
+        showLoading(false);
       }
     }
 
@@ -216,41 +280,35 @@
       document.getElementById("mainScreen").classList.add("hidden");
       document.getElementById("userInfoHeader").classList.add("hidden");
       document.getElementById("formLogin").reset();
+      switchTab('pinjam'); // Reset tab view
     }
 
-    function loadData() {
+    async function loadData() {
       showLoading(true);
-      const script = document.createElement('script');
-      script.src = `${API_URL}?action=getBarang&callback=handleDataResponse`;
-      script.onerror = function() {
+      try {
+        const result = await fetchJSONP(`${API_URL}?action=getBarang`);
+        if (result.status === "success") {
+          listBarang = result.data;
+          renderSelects();
+          renderTableStatus();
+        } else {
+          showStatus("Gagal mengambil data barang.", true);
+        }
+      } catch (err) {
+        showStatus("Gangguan koneksi ke Google Sheets.", true);
+      } finally {
         showLoading(false);
-        showStatus("Gagal terhubung ke server Google Sheets.", true);
-      };
-      document.body.appendChild(script);
-    }
-
-    function handleDataResponse(result) {
-      showLoading(false);
-      if (result.status === "success") {
-        listBarang = result.data;
-        renderSelects();
-        renderTableStatus();
-      } else {
-        showStatus("Gagal mengambil data barang.", true);
       }
-      const oldScript = document.querySelector(`script[src*="getBarang"]`);
-      if (oldScript) oldScript.remove();
     }
 
     function renderSelects() {
       const selectPinjam = document.getElementById("barangPinjam");
       const selectKembali = document.getElementById("barangKembali");
 
-      selectPinjam.innerHTML = '<option value="">-- Pilih Barang Tersedia --</option>';
-      selectKembali.innerHTML = '<option value="">-- Pilih Barang Dipinjam --</option>';
+      selectPinjam.innerHTML = '<option value="">-- Pilih --</option>';
+      selectKembali.innerHTML = '<option value="">-- Pilih --</option>';
 
-      let adaTersedia = false;
-      let adaDipinjam = false;
+      let adaTersedia = false, adaDipinjam = false;
 
       listBarang.forEach(b => {
         if (b.status === "Tersedia") {
@@ -262,8 +320,8 @@
         }
       });
 
-      if (!adaTersedia) selectPinjam.innerHTML = '<option value="">Tidak ada barang tersedia</option>';
-      if (!adaDipinjam) selectKembali.innerHTML = '<option value="">Tidak ada barang yang sedang dipinjam</option>';
+      if (!adaTersedia) selectPinjam.innerHTML = '<option value="">Seluruh barang sedang dipinjam</option>';
+      if (!adaDipinjam) selectKembali.innerHTML = '<option value="">Tidak ada tanggungan peminjaman</option>';
     }
 
     function renderTableStatus() {
@@ -271,15 +329,18 @@
       tbody.innerHTML = "";
       listBarang.forEach(b => {
         const isTersedia = b.status === "Tersedia";
-        const badgeClass = isTersedia ? "bg-emerald-100 text-emerald-800 border-emerald-300" : "bg-amber-100 text-amber-800 border-amber-300";
+        const dotColor = isTersedia ? "bg-[#34C759]" : "bg-[#FF3B30]";
+        const textLabel = isTersedia ? "Tersedia" : "Dipinjam";
+        
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-mono font-bold text-slate-500">${b.id}</td>
-            <td class="p-3 font-medium text-slate-800">${b.nama}</td>
-            <td class="p-3 text-center">
-              <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
-                ${b.status === "Tersedia" ? "🟢 Dikembalikan / Tersedia" : "🔴 Belum Dikembalikan"}
-              </span>
+          <tr class="hover:bg-gray-50/50 transition">
+            <td class="p-4 text-[13px] font-mono text-gray-400">${b.id}</td>
+            <td class="p-4 font-medium text-gray-800">${b.nama}</td>
+            <td class="p-4 text-right">
+              <div class="inline-flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full ${dotColor}"></span>
+                <span class="text-[13px] font-medium text-gray-600">${textLabel}</span>
+              </div>
             </td>
           </tr>
         `;
@@ -288,27 +349,32 @@
 
     function switchTab(tab) {
       hideStatus();
-      document.getElementById("formPinjam").classList.add("hidden");
-      document.getElementById("formKembali").classList.add("hidden");
-      document.getElementById("sectionStatus").classList.add("hidden");
-
-      document.getElementById("tabPinjamBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-blue-700 transition";
-      document.getElementById("tabKembaliBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-green-700 transition";
-      document.getElementById("tabStatusBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-purple-700 transition";
+      const forms = ['formPinjam', 'formKembali', 'sectionStatus'];
+      const tabs = ['tabPinjamBtn', 'tabKembaliBtn', 'tabStatusBtn'];
+      
+      forms.forEach(f => document.getElementById(f).classList.add('hidden'));
+      tabs.forEach(t => {
+        const el = document.getElementById(t);
+        el.classList.remove('segment-active');
+        el.classList.add('segment-inactive');
+      });
 
       if (tab === 'pinjam') {
-        document.getElementById("formPinjam").classList.remove("hidden");
-        document.getElementById("tabPinjamBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-blue-700 bg-white shadow-sm transition";
+        document.getElementById('formPinjam').classList.remove('hidden');
+        document.getElementById('tabPinjamBtn').classList.add('segment-active');
+        document.getElementById('tabPinjamBtn').classList.remove('segment-inactive');
       } else if (tab === 'kembali') {
-        document.getElementById("formKembali").classList.remove("hidden");
-        document.getElementById("tabKembaliBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-green-700 bg-white shadow-sm transition";
+        document.getElementById('formKembali').classList.remove('hidden');
+        document.getElementById('tabKembaliBtn').classList.add('segment-active');
+        document.getElementById('tabKembaliBtn').classList.remove('segment-inactive');
       } else if (tab === 'status') {
-        document.getElementById("sectionStatus").classList.remove("hidden");
-        document.getElementById("tabStatusBtn").className = "flex-1 py-2.5 text-xs sm:text-sm font-semibold rounded-lg text-purple-700 bg-white shadow-sm transition";
+        document.getElementById('sectionStatus').classList.remove('hidden');
+        document.getElementById('tabStatusBtn').classList.add('segment-active');
+        document.getElementById('tabStatusBtn').classList.remove('segment-inactive');
       }
     }
 
-    // Helper Konversi & Kompresi Gambar Canvas (< 300 KB)
+    // --- Image Compression Engine ---
     function compressImage(file, maxKB = 300) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -318,72 +384,60 @@
           img.src = event.target.result;
           img.onload = function() {
             const canvas = document.createElement("canvas");
-            let width = img.width;
-            let height = img.height;
-            const maxDimension = 1200; // Resize max dimension
+            let width = img.width, height = img.height;
+            const maxDim = 1200; // Optimal untuk pembacaan teks/detail tapi hemat size
 
-            if (width > height && width > maxDimension) {
-              height = Math.round((height * maxDimension) / width);
-              width = maxDimension;
-            } else if (height > maxDimension) {
-              width = Math.round((width * maxDimension) / height);
-              height = maxDimension;
+            if (width > height && width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
             }
 
             canvas.width = width;
             canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
+            canvas.getContext("2d").drawImage(img, 0, 0, width, height);
 
-            let quality = 0.85;
-            let resultDataUrl = canvas.toDataURL("image/jpeg", quality);
+            let quality = 0.8;
+            let dataUrl = canvas.toDataURL("image/jpeg", quality);
 
-            // Loop kurangi kualitas jika masih > 300 KB
-            while (resultDataUrl.length > maxKB * 1024 * 1.33 && quality > 0.1) {
+            while (dataUrl.length > maxKB * 1024 * 1.34 && quality > 0.1) {
               quality -= 0.1;
-              resultDataUrl = canvas.toDataURL("image/jpeg", quality);
+              dataUrl = canvas.toDataURL("image/jpeg", quality);
             }
-            resolve(resultDataUrl);
+            resolve(dataUrl);
           };
-          img.onerror = (err) => reject(err);
+          img.onerror = reject;
         };
-        reader.onerror = (err) => reject(err);
+        reader.onerror = reject;
       });
     }
 
     async function handlePinjam(e) {
       e.preventDefault();
-      const nama = document.getElementById("namaPinjam").value.trim();
+      const nama = document.getElementById("namaPinjam").value;
       const peran = document.getElementById("peranPinjam").value;
       const barang = document.getElementById("barangPinjam").value;
 
-      if (!barang) {
-        showStatus("Pilih barang yang ingin dipinjam!", true);
-        return;
-      }
+      if (!barang) return showStatus("Silakan pilih barang terlebih dahulu.", true);
 
-      showLoading(true);
-      hideStatus();
-
+      showLoading(true); hideStatus();
       try {
         const payload = { action: "pinjamBarang", nama, peran, namaBarang: barang };
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify(payload)
-        });
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
         
         if (result.status === "success") {
-          showStatus("✅ " + result.message, false);
+          showStatus(result.message, false);
           document.getElementById("formPinjam").reset();
           document.getElementById("namaPinjam").value = currentUser.nama;
           loadData();
         } else {
-          showStatus("❌ " + result.message, true);
+          showStatus(result.message, true);
         }
       } catch (err) {
-        showStatus("❌ Terjadi kesalahan jaringan.", true);
+        showStatus("Gagal memproses peminjaman.", true);
       } finally {
         showLoading(false);
       }
@@ -395,68 +449,51 @@
       const catatan = document.getElementById("catatan").value;
       const fileInput = document.getElementById("fotoBukti");
 
-      if (!barang) {
-        showStatus("Pilih barang yang akan dikembalikan!", true);
-        return;
-      }
+      if (!barang) return showStatus("Pilih barang yang dikembalikan.", true);
+      if (!fileInput.files.length) return showStatus("Foto bukti wajib dilampirkan.", true);
 
-      if (!fileInput.files || fileInput.files.length === 0) {
-        showStatus("Ambil foto bukti fisik pengembalian!", true);
-        return;
-      }
-
-      const file = fileInput.files[0];
-      
-      // Blokir jika file ditangkap dari file picker dan bukan capture live camera
-      if (file.lastModified && (Date.now() - file.lastModified > 600000)) {
-        // Warning opsional jika mengunggah foto lama dari file gallery (10 menit lalu)
-      }
-
-      showLoading(true);
-      hideStatus();
-
+      showLoading(true); hideStatus();
       try {
-        // Kompresi Gambar ke Max 300 KB
-        const compressedBase64 = await compressImage(file, 300);
-
-        const payload = {
-          action: "kembalikanBarang",
-          namaBarang: barang,
-          catatan: catatan,
-          imageData: compressedBase64
-        };
-
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify(payload)
-        });
+        const base64 = await compressImage(fileInput.files[0], 300);
+        const payload = { action: "kembalikanBarang", namaBarang: barang, catatan, imageData: base64 };
+        
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
 
         if (result.status === "success") {
-          showStatus("✅ " + result.message, false);
+          showStatus("Berhasil! Barang telah tercatat kembali ke sistem.", false);
           document.getElementById("formKembali").reset();
           loadData();
         } else {
-          showStatus("❌ " + result.message, true);
+          showStatus(result.message, true);
         }
       } catch (err) {
-        showStatus("❌ Terjadi kesalahan saat memproses foto/pengembalian.", true);
+        showStatus("Proses pengembalian gagal karena koneksi.", true);
       } finally {
         showLoading(false);
       }
     }
 
+    // UI Helpers
     function showLoading(show) {
       document.getElementById("loading").classList.toggle("hidden", !show);
       document.getElementById("btnPinjamSubmit").disabled = show;
       document.getElementById("btnKembaliSubmit").disabled = show;
+      
+      const forms = ['formPinjam', 'formKembali', 'sectionStatus'];
+      forms.forEach(f => {
+        const el = document.getElementById(f);
+        if(!el.classList.contains('hidden') && show) el.style.opacity = '0.4';
+        if(!show) el.style.opacity = '1';
+      });
     }
 
     function showStatus(msg, isError) {
       const el = document.getElementById("statusMessage");
       el.innerText = msg;
-      el.className = `mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium text-center shadow-sm ${isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`;
+      el.className = `mb-6 p-4 rounded-xl text-[14px] font-medium text-center transition-all ${
+        isError ? 'bg-[#FFF0F0] text-[#FF3B30] border border-[#FFD1D1]' : 'bg-[#F0FFF4] text-[#34C759] border border-[#D1FFD9]'
+      }`;
       el.classList.remove("hidden");
     }
 
