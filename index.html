@@ -5,160 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Sistem Peminjaman - SMAN 10 Pandeglang</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --blue:#007AFF; --blue-dark:#0066CC; --green:#34C759; --red:#FF3B30;
-    }
-    *{ box-sizing:border-box; }
-    body {
-      font-family: 'Inter', sans-serif; background-color: #f5f5f7; color: #1d1d1f;
-      -webkit-font-smoothing: antialiased; min-height:100vh; position:relative; overflow-x:hidden;
-    }
-
-    /* ---------- Ambient animated background mesh ---------- */
-    .bg-mesh{
-      position:fixed; inset:-15%; z-index:0; pointer-events:none; opacity:.5; filter:blur(70px);
-      background:
-        radial-gradient(circle at 15% 20%, rgba(0,122,255,.20) 0%, transparent 40%),
-        radial-gradient(circle at 85% 15%, rgba(52,199,89,.16) 0%, transparent 40%),
-        radial-gradient(circle at 50% 90%, rgba(175,82,222,.14) 0%, transparent 45%);
-      animation: meshDrift 18s ease-in-out infinite alternate;
-    }
-    @keyframes meshDrift{
-      0%{ transform: translate(0,0) scale(1); }
-      100%{ transform: translate(-3%, 4%) scale(1.12); }
-    }
-
-    .glass-card {
-      background: #ffffff; border-radius: 24px; box-shadow: 0 8px 40px rgba(0, 0, 0, 0.04);
-      position:relative; z-index:1;
-      opacity:0; transform: translateY(28px) scale(.98);
-      animation: cardEnter .7s cubic-bezier(.2,.8,.2,1) forwards;
-      animation-delay:.05s;
-    }
-    @keyframes cardEnter{ to{ opacity:1; transform:translateY(0) scale(1); } }
-
+    body { font-family: 'Inter', sans-serif; background-color: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; }
+    .glass-card { background: #ffffff; border-radius: 24px; box-shadow: 0 8px 40px rgba(0, 0, 0, 0.04); }
     .input-field { background-color: #f5f5f7; border: 1.5px solid transparent; transition: all 0.2s ease; }
     .input-field:focus { background-color: #ffffff; border-color: #007AFF; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1); outline: none; }
-
-    .btn-primary { background-color: #007AFF; transition: transform .15s ease-out, background-color .2s ease, box-shadow .2s ease; position:relative; overflow:hidden; }
-    .btn-primary:hover { background-color: #0066CC; box-shadow:0 10px 24px rgba(0,122,255,.28); }
-    .btn-primary:active { transform: scale(0.97); }
-
-    .btn-green{ transition: transform .15s ease-out, background-color .2s ease, box-shadow .2s ease; position:relative; overflow:hidden; }
-    .btn-green:hover{ box-shadow:0 10px 24px rgba(52,199,89,.28); }
-    .btn-green:active{ transform:scale(0.97); }
-
-    /* ---------- ripple ---------- */
-    .ripple{ position:absolute; border-radius:50%; background:rgba(255,255,255,.55); transform:scale(0); animation:rippleAnim .6s ease-out forwards; pointer-events:none; }
-    @keyframes rippleAnim{ to{ transform:scale(2.6); opacity:0; } }
-
-    /* ---------- segmented control with sliding indicator ---------- */
-    .segmented-control { background-color: rgba(118, 118, 128, 0.12); border-radius: 12px; padding: 3px; position:relative; }
-    #segmentIndicator{
-      position:absolute; top:3px; bottom:3px; left:3px; width:0;
-      background:#ffffff; border-radius:9px; box-shadow:0 3px 8px rgba(0,0,0,.08);
-      transition: left .32s cubic-bezier(.2,.8,.2,1), width .32s cubic-bezier(.2,.8,.2,1);
-      z-index:0;
-    }
-    .segment-btn { border-radius: 9px; transition: color .2s ease; position:relative; z-index:1; }
-    .segment-active { color: #1d1d1f; font-weight:600; }
+    .btn-primary { background-color: #007AFF; transition: all 0.2s ease; }
+    .btn-primary:hover { background-color: #0066CC; }
+    .btn-primary:active { transform: scale(0.98); }
+    .segmented-control { background-color: rgba(118, 118, 128, 0.12); border-radius: 12px; padding: 3px; }
+    .segment-btn { border-radius: 9px; transition: all 0.2s ease; }
+    .segment-active { background-color: #ffffff; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08); color: #1d1d1f; font-weight: 600; }
     .segment-inactive { color: #86868b; font-weight: 500; }
     .segment-inactive:hover { color: #1d1d1f; }
-
-    /* ---------- form panel transitions ---------- */
-    .panel{ transition: opacity .35s ease, transform .35s ease; }
-    .panel-hidden{ display:none; }
-    .panel-enter{ opacity:0; transform:translateY(10px); }
-
-    /* ---------- login screen entrance ---------- */
-    #loginScreen .field-row{ opacity:0; transform:translateY(14px); animation:fieldIn .55s cubic-bezier(.2,.8,.2,1) forwards; }
-    @keyframes fieldIn{ to{ opacity:1; transform:translateY(0); } }
-
-    /* ---------- title split reveal ---------- */
-    .split-word{ display:inline-block; overflow:hidden; vertical-align:top; }
-    .split-word span{ display:inline-block; transform:translateY(100%); opacity:0; animation:riseIn .6s cubic-bezier(.2,.9,.2,1) forwards; }
-    @keyframes riseIn{ to{ transform:translateY(0); opacity:1; } }
-    .subtitle-fade{ opacity:0; animation: fadeUp .6s ease forwards; animation-delay:.45s; }
-    @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-
-    /* ---------- status toast ---------- */
-    #statusMessage{
-      transform: translateY(-8px); opacity:0; transition: all .35s cubic-bezier(.2,.8,.2,1);
-      display:flex; align-items:center; gap:10px;
-    }
-    #statusMessage.show{ transform:translateY(0); opacity:1; }
-    .status-icon{ width:20px; height:20px; flex-shrink:0; }
-    .status-icon svg{ width:100%; height:100%; }
-    .status-icon.success circle, .status-icon.success path{ stroke-dasharray:60; stroke-dashoffset:60; animation: drawCheck .5s ease forwards .1s; }
-    @keyframes drawCheck{ to{ stroke-dashoffset:0; } }
-
-    /* ---------- loading ---------- */
-    #loading p{ animation: pulseText 1.4s ease-in-out infinite; }
-    @keyframes pulseText{ 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
-
-    /* ---------- table rows stagger ---------- */
-    .row-in{ opacity:0; transform:translateY(10px); animation:rowIn .45s cubic-bezier(.2,.8,.2,1) forwards; }
-    @keyframes rowIn{ to{ opacity:1; transform:translateY(0); } }
-    #tableStatusBody tr{ transition: background-color .2s ease; }
-
-    .status-dot{ position:relative; }
-    .status-dot.live::after{
-      content:''; position:absolute; inset:-3px; border-radius:50%; border:1.5px solid currentColor; opacity:.6;
-      animation: pulseDot 1.8s ease-out infinite;
-    }
-    @keyframes pulseDot{ 0%{ transform:scale(.6); opacity:.7; } 100%{ transform:scale(2.2); opacity:0; } }
-
-    /* ---------- select / input shake on error ---------- */
-    .shake{ animation: shakeAnim .4s ease; }
-    @keyframes shakeAnim{
-      10%,90%{ transform:translateX(-2px); }
-      20%,80%{ transform:translateX(4px); }
-      30%,50%,70%{ transform:translateX(-7px); }
-      40%,60%{ transform:translateX(7px); }
-    }
-
-    /* ---------- header user chip ---------- */
-    #userInfoHeader{ opacity:0; transform:translateY(-6px) scale(.95); transition: all .3s cubic-bezier(.2,.8,.2,1); }
-    #userInfoHeader.show{ opacity:1; transform:translateY(0) scale(1); }
-
-    @media (prefers-reduced-motion: reduce){
-      *{ animation:none !important; transition:none !important; }
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
 
-  <div class="bg-mesh"></div>
-
   <div class="w-full max-w-2xl glass-card overflow-hidden">
-
+    
     <!-- Header -->
     <div class="px-8 pt-10 pb-6 text-center relative">
-      <div id="userInfoHeader" class="hidden absolute top-6 right-6 items-center space-x-3 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+      <div id="userInfoHeader" class="hidden absolute top-6 right-6 flex items-center space-x-3 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
         <span class="text-xs font-medium text-gray-600" id="userDisplayName">User</span>
         <button onclick="handleLogout()" class="text-xs font-semibold text-red-500 hover:text-red-700 transition">Keluar</button>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1d1d1f]" id="mainTitle">Peminjaman Barang</h1>
-      <p class="text-[15px] text-gray-500 font-medium mt-1 subtitle-fade">SMAN 10 Pandeglang</p>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1d1d1f]">Peminjaman Barang</h1>
+      <p class="text-[15px] text-gray-500 font-medium mt-1">SMAN 10 Pandeglang</p>
     </div>
 
     <div class="px-6 sm:px-10 pb-10">
-
+      
       <!-- SCREEN 1: LOGIN -->
-      <div id="loginScreen" class="transition-all duration-300">
-        <p class="text-sm text-gray-500 text-center mb-8 field-row" style="animation-delay:.15s">Silakan identifikasi diri Anda untuk melanjutkan.</p>
+      <div id="loginScreen" class="animate-fade-in transition-all duration-300">
+        <p class="text-sm text-gray-500 text-center mb-8">Silakan identifikasi diri Anda untuk melanjutkan.</p>
         <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-5 max-w-sm mx-auto">
-          <div class="field-row" style="animation-delay:.22s">
+          <div>
             <label class="block text-[13px] font-semibold text-gray-700 mb-2">Nama Lengkap</label>
             <input type="text" id="loginNama" required placeholder="Contoh: Jajan / Aan" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
-          <div class="field-row" style="animation-delay:.29s">
+          <div>
             <label class="block text-[13px] font-semibold text-gray-700 mb-2">Tanggal Lahir (DDMMYYYY)</label>
             <input type="text" id="loginTglLahir" required pattern="\d{8}" title="Masukkan 8 digit angka tanpa spasi atau tanda strip" placeholder="Contoh: 03071984" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
-          <button type="submit" id="btnLoginSubmit" class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl mt-2 text-[15px] field-row" style="animation-delay:.36s">
+          <button type="submit" class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl mt-2 text-[15px]">
             Masuk
           </button>
         </form>
@@ -166,10 +57,9 @@
 
       <!-- SCREEN 2: DASHBOARD -->
       <div id="mainScreen" class="hidden transition-all duration-300">
-
+        
         <!-- Segmented Control -->
-        <div class="segmented-control flex mb-8 overflow-x-auto" id="segmentedControl">
-          <div id="segmentIndicator"></div>
+        <div class="segmented-control flex mb-8 overflow-x-auto">
           <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 whitespace-nowrap py-2 px-4 text-[14px] segment-btn segment-active">
             Pinjam
           </button>
@@ -187,10 +77,10 @@
           <p class="text-[13px] text-gray-500 mt-3 font-medium">Memproses data...</p>
         </div>
 
-        <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-[14px] font-medium"></div>
+        <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl text-[14px] font-medium text-center"></div>
 
         <!-- Form 1: Pinjam Barang -->
-        <form id="formPinjam" class="space-y-5 panel" onsubmit="handlePinjam(event)">
+        <form id="formPinjam" class="space-y-5" onsubmit="handlePinjam(event)">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label class="block text-[13px] font-semibold text-gray-700 mb-2">Nama Peminjam</label>
@@ -217,7 +107,7 @@
         </form>
 
         <!-- Form 2: Pengembalian Barang -->
-        <form id="formKembali" class="space-y-5 hidden panel" onsubmit="handleKembali(event)">
+        <form id="formKembali" class="space-y-5 hidden" onsubmit="handleKembali(event)">
           <div>
             <label class="block text-[13px] font-semibold text-gray-700 mb-2">Barang yang Dikembalikan</label>
             <select id="barangKembali" required class="w-full input-field p-3.5 rounded-xl text-[15px]">
@@ -226,24 +116,24 @@
           </div>
           <div>
             <label class="block text-[13px] font-semibold text-gray-700 mb-2">Foto Bukti (Kamera Langsung)</label>
-            <input type="file" id="fotoBukti" accept="image/*" capture="environment" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-xl p-1 bg-white transition-colors">
+            <input type="file" id="fotoBukti" accept="image/*" capture="environment" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer border border-gray-200 rounded-xl p-1 bg-white">
           </div>
           <div>
             <label class="block text-[13px] font-semibold text-gray-700 mb-2">Catatan Kondisi (Opsional)</label>
             <textarea id="catatan" class="w-full input-field p-3.5 rounded-xl text-[15px]" rows="2" placeholder="Cth: Kelengkapan utuh, berfungsi normal"></textarea>
           </div>
-          <button type="submit" id="btnKembaliSubmit" class="w-full btn-green bg-[#34C759] hover:bg-[#2EB150] transition text-white font-semibold py-3.5 rounded-xl text-[15px] mt-2">
+          <button type="submit" id="btnKembaliSubmit" class="w-full bg-[#34C759] hover:bg-[#2EB150] transition text-white font-semibold py-3.5 rounded-xl text-[15px] mt-2 active:scale-[0.98]">
             Proses Pengembalian
           </button>
         </form>
 
         <!-- Menu 3: Status Barang (Khusus Kepala TU / Jajan) -->
-        <div id="sectionStatus" class="hidden panel">
+        <div id="sectionStatus" class="hidden">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-[15px] font-semibold text-gray-800">Daftar Peminjaman Aktif</h3>
             <button onclick="loadData()" class="text-[12px] font-medium text-[#007AFF] hover:underline">Perbarui Data</button>
           </div>
-
+          
           <div class="border border-gray-100 rounded-2xl overflow-x-auto bg-white">
             <table class="w-full text-left text-[14px] min-w-[550px]">
               <thead class="bg-gray-50 border-b border-gray-100">
@@ -265,53 +155,9 @@
   </div>
 
   <script>
-    // Split title into animated letters on load
-    (function splitTitle(){
-      const el = document.getElementById('mainTitle');
-      const words = el.textContent.trim().split(' ');
-      el.innerHTML = words.map((w, wi) => {
-        const letters = w.split('').map((ch, ci) => {
-          const delay = (wi * 0.09 + ci * 0.025).toFixed(2);
-          return `<span style="animation-delay:${delay}s">${ch === ' ' ? '&nbsp;' : ch}</span>`;
-        }).join('');
-        return `<span class="split-word">${letters}</span>`;
-      }).join(' ');
-    })();
-
-    // Ripple effect for buttons
-    function attachRipple(btn){
-      btn.addEventListener('click', function(e){
-        const rect = btn.getBoundingClientRect();
-        const ripple = document.createElement('span');
-        const size = Math.max(rect.width, rect.height);
-        ripple.className = 'ripple';
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-        ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-        btn.appendChild(ripple);
-        setTimeout(()=> ripple.remove(), 650);
-      });
-    }
-    document.querySelectorAll('.btn-primary, .btn-green').forEach(attachRipple);
-
-    // Magnetic effect for primary submit buttons
-    function attachMagnetic(btn, strength = 0.25){
-      btn.addEventListener('mousemove', (e)=>{
-        const rect = btn.getBoundingClientRect();
-        const relX = e.clientX - (rect.left + rect.width/2);
-        const relY = e.clientY - (rect.top + rect.height/2);
-        btn.style.transform = `translate(${relX*strength}px, ${relY*strength}px)`;
-      });
-      btn.addEventListener('mouseleave', ()=>{ btn.style.transform = 'translate(0,0)'; });
-    }
-    ['btnLoginSubmit','btnPinjamSubmit','btnKembaliSubmit'].forEach(id=>{
-      const el = document.getElementById(id);
-      if(el) attachMagnetic(el, 0.18);
-    });
-
     // URL Web App sudah otomatis terhubung ke sistem Anda
-    const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec";
-
+    const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec"; 
+    
     let listBarang = [];
     let currentUser = null;
 
@@ -319,7 +165,7 @@
       return new Promise((resolve, reject) => {
         const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
         const script = document.createElement('script');
-
+        
         window[callbackName] = function(data) {
           delete window[callbackName];
           document.body.removeChild(script);
@@ -340,74 +186,44 @@
       const nama = document.getElementById("loginNama").value.trim();
       const tglLahir = document.getElementById("loginTglLahir").value.trim();
 
-      showLoadingLogin(true);
+      showLoading(true);
       try {
         const res = await fetchJSONP(`${API_URL}?action=login&nama=${encodeURIComponent(nama)}&tglLahir=${encodeURIComponent(tglLahir)}`);
-
+        
         if (res.status === "success") {
           currentUser = res.user;
+          document.getElementById("loginScreen").classList.add("hidden");
+          document.getElementById("mainScreen").classList.remove("hidden");
+          document.getElementById("userInfoHeader").classList.remove("hidden");
+          
+          document.getElementById("userDisplayName").innerText = currentUser.nama.split(' ')[0];
+          document.getElementById("namaPinjam").value = currentUser.nama;
 
-          const loginScreen = document.getElementById("loginScreen");
-          loginScreen.style.transition = "opacity .3s ease, transform .3s ease";
-          loginScreen.style.opacity = "0";
-          loginScreen.style.transform = "translateY(-10px)";
-
-          setTimeout(()=>{
-            loginScreen.classList.add("hidden");
-            document.getElementById("mainScreen").classList.remove("hidden");
-            const userChip = document.getElementById("userInfoHeader");
-            userChip.classList.remove("hidden");
-            userChip.style.display = "flex";
-            requestAnimationFrame(()=> userChip.classList.add("show"));
-
-            document.getElementById("userDisplayName").innerText = currentUser.nama.split(' ')[0];
-            document.getElementById("namaPinjam").value = currentUser.nama;
-
-            if (currentUser.isKepalaTU) {
-              document.getElementById("tabStatusBtn").classList.remove("hidden");
-              switchTab('status');
-            } else {
-              document.getElementById("tabStatusBtn").classList.add("hidden");
-              switchTab('pinjam');
-            }
-            loadData();
-          }, 280);
+          if (currentUser.isKepalaTU) {
+            document.getElementById("tabStatusBtn").classList.remove("hidden");
+            // Auto-direct Jajan ke Menu Pantauan saat login
+            switchTab('status');
+          } else {
+            document.getElementById("tabStatusBtn").classList.add("hidden");
+            // Auto-direct User biasa ke Menu Pinjam saat login
+            switchTab('pinjam');
+          }
+          loadData();
         } else {
-          const form = document.getElementById("formLogin");
-          form.classList.add("shake");
-          setTimeout(()=> form.classList.remove("shake"), 420);
           alert("Kredensial tidak valid. Silakan periksa kembali.");
         }
       } catch (err) {
         alert("Gagal terhubung ke Google Sheets.");
       } finally {
-        showLoadingLogin(false);
+        showLoading(false);
       }
-    }
-
-    function showLoadingLogin(show){
-      const btn = document.getElementById("btnLoginSubmit");
-      btn.disabled = show;
-      btn.style.opacity = show ? '.6' : '1';
-      btn.innerText = show ? 'Memeriksa...' : 'Masuk';
     }
 
     function handleLogout() {
       currentUser = null;
-      const userChip = document.getElementById("userInfoHeader");
-      userChip.classList.remove("show");
-      setTimeout(()=>{ userChip.classList.add("hidden"); userChip.style.display=""; }, 200);
-
+      document.getElementById("loginScreen").classList.remove("hidden");
       document.getElementById("mainScreen").classList.add("hidden");
-      const loginScreen = document.getElementById("loginScreen");
-      loginScreen.classList.remove("hidden");
-      loginScreen.style.opacity = "0";
-      loginScreen.style.transform = "translateY(10px)";
-      requestAnimationFrame(()=>{
-        loginScreen.style.transition = "opacity .35s ease, transform .35s ease";
-        loginScreen.style.opacity = "1";
-        loginScreen.style.transform = "translateY(0)";
-      });
+      document.getElementById("userInfoHeader").classList.add("hidden");
       document.getElementById("formLogin").reset();
     }
 
@@ -455,24 +271,22 @@
     function renderTableStatus() {
       const tbody = document.getElementById("tableStatusBody");
       tbody.innerHTML = "";
-
-      listBarang.forEach((b, i) => {
+      
+      listBarang.forEach(b => {
         const isTersedia = b.status === "Tersedia";
         const dotColor = isTersedia ? "bg-[#34C759]" : "bg-[#FF3B30]";
-        const liveClass = isTersedia ? "text-[#34C759]" : "text-[#FF3B30]";
         const textLabel = isTersedia ? "Tersedia" : "Dipinjam";
-
-        const detailPeminjam = isTersedia
-          ? '<span class="text-gray-400 italic text-[13px]">Sedang di sekolah (Tersedia)</span>'
+        
+        // Desain Khusus Realtime Peminjam untuk Kepala TU
+        const detailPeminjam = isTersedia 
+          ? '<span class="text-gray-400 italic text-[13px]">Sedang di sekolah (Tersedia)</span>' 
           : `<div class="flex flex-col">
                <span class="font-semibold text-[#007AFF] text-[14px]">${b.peminjam}</span>
                <span class="text-[12px] text-gray-500 mt-0.5">${b.peran} &bull; Dipinjam: ${b.waktu}</span>
              </div>`;
-
-        const row = document.createElement('tr');
-        row.className = "hover:bg-gray-50/50 transition border-b border-gray-50 last:border-0 row-in";
-        row.style.animationDelay = (i * 0.06) + 's';
-        row.innerHTML = `
+        
+        tbody.innerHTML += `
+          <tr class="hover:bg-gray-50/50 transition border-b border-gray-50 last:border-0">
             <td class="p-4">
               <div class="font-medium text-gray-800">${b.nama}</div>
               <div class="text-[12px] font-mono text-gray-400 mt-0.5">${b.id}</div>
@@ -480,73 +294,41 @@
             <td class="p-4">${detailPeminjam}</td>
             <td class="p-4 text-right">
               <div class="inline-flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full ${dotColor} status-dot ${liveClass} live"></span>
+                <span class="w-2 h-2 rounded-full ${dotColor}"></span>
                 <span class="text-[13px] font-medium text-gray-600">${textLabel}</span>
               </div>
             </td>
+          </tr>
         `;
-        tbody.appendChild(row);
       });
-    }
-
-    function updateIndicator(activeBtn){
-      const indicator = document.getElementById('segmentIndicator');
-      if(!activeBtn || !indicator) return;
-      indicator.style.left = activeBtn.offsetLeft + 'px';
-      indicator.style.width = activeBtn.offsetWidth + 'px';
-    }
-
-    function switchPanel(showId, hideIds){
-      hideIds.forEach(id => {
-        const el = document.getElementById(id);
-        if(!el.classList.contains('hidden')){
-          el.style.opacity = '0';
-          el.style.transform = 'translateY(8px)';
-          setTimeout(()=> el.classList.add('hidden'), 180);
-        }
-      });
-      const show = document.getElementById(showId);
-      setTimeout(()=>{
-        show.classList.remove('hidden');
-        show.style.opacity = '0';
-        show.style.transform = 'translateY(8px)';
-        requestAnimationFrame(()=>{
-          show.style.opacity = '1';
-          show.style.transform = 'translateY(0)';
-        });
-      }, hideIds.length ? 190 : 0);
     }
 
     function switchTab(tab) {
       hideStatus();
       const forms = ['formPinjam', 'formKembali', 'sectionStatus'];
       const tabs = ['tabPinjamBtn', 'tabKembaliBtn', 'tabStatusBtn'];
-
+      
+      forms.forEach(f => document.getElementById(f).classList.add('hidden'));
       tabs.forEach(t => {
         const el = document.getElementById(t);
         el.classList.remove('segment-active');
         el.classList.add('segment-inactive');
       });
 
-      let activeFormId, activeTabId;
-      if (tab === 'pinjam') { activeFormId = 'formPinjam'; activeTabId = 'tabPinjamBtn'; }
-      else if (tab === 'kembali') { activeFormId = 'formKembali'; activeTabId = 'tabKembaliBtn'; }
-      else if (tab === 'status') { activeFormId = 'sectionStatus'; activeTabId = 'tabStatusBtn'; }
-
-      const hideIds = forms.filter(f => f !== activeFormId);
-      switchPanel(activeFormId, hideIds);
-
-      const activeTabEl = document.getElementById(activeTabId);
-      activeTabEl.classList.add('segment-active');
-      activeTabEl.classList.remove('segment-inactive');
-
-      requestAnimationFrame(()=> updateIndicator(activeTabEl));
+      if (tab === 'pinjam') {
+        document.getElementById('formPinjam').classList.remove('hidden');
+        document.getElementById('tabPinjamBtn').classList.add('segment-active');
+        document.getElementById('tabPinjamBtn').classList.remove('segment-inactive');
+      } else if (tab === 'kembali') {
+        document.getElementById('formKembali').classList.remove('hidden');
+        document.getElementById('tabKembaliBtn').classList.add('segment-active');
+        document.getElementById('tabKembaliBtn').classList.remove('segment-inactive');
+      } else if (tab === 'status') {
+        document.getElementById('sectionStatus').classList.remove('hidden');
+        document.getElementById('tabStatusBtn').classList.add('segment-active');
+        document.getElementById('tabStatusBtn').classList.remove('segment-inactive');
+      }
     }
-
-    window.addEventListener('resize', ()=>{
-      const active = document.querySelector('.segment-active');
-      if(active) updateIndicator(active);
-    });
 
     function compressImage(file, maxKB = 300) {
       return new Promise((resolve, reject) => {
@@ -558,7 +340,7 @@
           img.onload = function() {
             const canvas = document.createElement("canvas");
             let width = img.width, height = img.height;
-            const maxDim = 1200;
+            const maxDim = 1200; 
 
             if (width > height && width > maxDim) {
               height = Math.round((height * maxDim) / width);
@@ -593,19 +375,14 @@
       const peran = document.getElementById("peranPinjam").value;
       const barang = document.getElementById("barangPinjam").value;
 
-      if (!barang) {
-        const sel = document.getElementById("barangPinjam");
-        sel.classList.add("shake");
-        setTimeout(()=> sel.classList.remove("shake"), 420);
-        return showStatus("Silakan pilih barang terlebih dahulu.", true);
-      }
+      if (!barang) return showStatus("Silakan pilih barang terlebih dahulu.", true);
 
       showLoading(true); hideStatus();
       try {
         const payload = { action: "pinjamBarang", nama, peran, namaBarang: barang };
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
-
+        
         if (result.status === "success") {
           showStatus(result.message, false);
           document.getElementById("formPinjam").reset();
@@ -634,7 +411,7 @@
       try {
         const base64 = await compressImage(fileInput.files[0], 300);
         const payload = { action: "kembalikanBarang", namaBarang: barang, catatan, imageData: base64 };
-
+        
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const result = await res.json();
 
@@ -656,7 +433,7 @@
       document.getElementById("loading").classList.toggle("hidden", !show);
       document.getElementById("btnPinjamSubmit").disabled = show;
       document.getElementById("btnKembaliSubmit").disabled = show;
-
+      
       const forms = ['formPinjam', 'formKembali', 'sectionStatus'];
       forms.forEach(f => {
         const el = document.getElementById(f);
@@ -665,27 +442,17 @@
       });
     }
 
-    const iconSuccess = `<span class="status-icon success" style="color:#34C759">
-        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </span>`;
-    const iconError = `<span class="status-icon" style="color:#FF3B30">
-        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v6M12 16.5v.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </span>`;
-
     function showStatus(msg, isError) {
       const el = document.getElementById("statusMessage");
-      el.innerHTML = `${isError ? iconError : iconSuccess}<span>${msg}</span>`;
-      el.className = `mb-6 p-4 rounded-xl text-[14px] font-medium ${
+      el.innerText = msg;
+      el.className = `mb-6 p-4 rounded-xl text-[14px] font-medium text-center transition-all ${
         isError ? 'bg-[#FFF0F0] text-[#FF3B30] border border-[#FFD1D1]' : 'bg-[#F0FFF4] text-[#34C759] border border-[#D1FFD9]'
       }`;
       el.classList.remove("hidden");
-      requestAnimationFrame(()=> el.classList.add("show"));
     }
 
     function hideStatus() {
-      const el = document.getElementById("statusMessage");
-      el.classList.remove("show");
-      setTimeout(()=> el.classList.add("hidden"), 250);
+      document.getElementById("statusMessage").classList.add("hidden");
     }
   </script>
 </body>
