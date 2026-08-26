@@ -86,8 +86,8 @@
             <input type="text" id="loginNama" required placeholder="Contoh: Jajan / Aan" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
           <div>
-            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Tanggal Lahir</label>
-            <input type="text" id="loginTglLahir" required placeholder="DD-MM-YYYY (Contoh: 03-07-1984)" class="w-full input-field p-3.5 rounded-xl text-[15px]">
+            <label class="block text-[13px] font-semibold text-gray-700 mb-2">Tanggal Lahir (DDMMYYYY)</label>
+            <input type="text" id="loginTglLahir" required pattern="\d{8}" title="Masukkan 8 digit angka tanpa spasi atau tanda strip" placeholder="Contoh: 03071984" class="w-full input-field p-3.5 rounded-xl text-[15px]">
           </div>
           <button type="submit" class="w-full btn-primary text-white font-semibold py-3.5 rounded-xl mt-2 text-[15px]">
             Masuk
@@ -99,15 +99,15 @@
       <div id="mainScreen" class="hidden transition-all duration-300">
         
         <!-- Segmented Control -->
-        <div class="segmented-control flex mb-8">
-          <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 py-2 text-[14px] segment-btn segment-active">
+        <div class="segmented-control flex mb-8 overflow-x-auto">
+          <button id="tabPinjamBtn" onclick="switchTab('pinjam')" class="flex-1 whitespace-nowrap py-2 px-4 text-[14px] segment-btn segment-active">
             Pinjam
           </button>
-          <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="flex-1 py-2 text-[14px] segment-btn segment-inactive">
+          <button id="tabKembaliBtn" onclick="switchTab('kembali')" class="flex-1 whitespace-nowrap py-2 px-4 text-[14px] segment-btn segment-inactive">
             Kembalikan
           </button>
-          <button id="tabStatusBtn" onclick="switchTab('status')" class="hidden flex-1 py-2 text-[14px] segment-btn segment-inactive">
-            Status
+          <button id="tabStatusBtn" onclick="switchTab('status')" class="hidden flex-1 whitespace-nowrap py-2 px-4 text-[14px] segment-btn segment-inactive">
+            Pantau Barang (Kepala TU)
           </button>
         </div>
 
@@ -171,19 +171,20 @@
           </button>
         </form>
 
-        <!-- Menu 3: Status Barang (Admin) -->
+        <!-- Menu 3: Status Barang (Kepala TU) -->
         <div id="sectionStatus" class="hidden">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-[15px] font-semibold text-gray-800">Inventaris Sistem</h3>
             <button onclick="loadData()" class="text-[12px] font-medium text-[#007AFF] hover:underline">Perbarui Data</button>
           </div>
           
-          <div class="border border-gray-100 rounded-2xl overflow-hidden bg-white">
-            <table class="w-full text-left text-[14px]">
+          <div class="border border-gray-100 rounded-2xl overflow-x-auto bg-white">
+            <table class="w-full text-left text-[14px] min-w-[500px]">
               <thead class="bg-gray-50 border-b border-gray-100">
                 <tr>
                   <th class="p-4 font-semibold text-gray-600">ID</th>
                   <th class="p-4 font-semibold text-gray-600">Nama Barang</th>
+                  <th class="p-4 font-semibold text-gray-600">Peminjam Saat Ini</th>
                   <th class="p-4 font-semibold text-gray-600 text-right">Status</th>
                 </tr>
               </thead>
@@ -205,7 +206,7 @@
   </footer>
 
   <script>
-    // URL Web App Anda sudah ditautkan di sini
+    // ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP DEPLOYMENT ANDA YANG BARU
     const API_URL = "https://script.google.com/macros/s/AKfycbziucoWMZsD4M2j3RQscoGOwuhtNSdil4BxS8c5_ov1JQx-wSVAsr7xRlTtqVBkt15k/exec"; 
     
     let listBarang = [];
@@ -251,7 +252,8 @@
           document.getElementById("userDisplayName").innerText = currentUser.nama.split(' ')[0];
           document.getElementById("namaPinjam").value = currentUser.nama;
 
-          if (currentUser.isSuperAdmin) {
+          // Memunculkan tab jika role adalah Kepala TU
+          if (currentUser.isKepalaTU) {
             document.getElementById("tabStatusBtn").classList.remove("hidden");
             document.getElementById("tabStatusBtn").classList.add("flex-1");
           } else {
@@ -325,12 +327,14 @@
         const isTersedia = b.status === "Tersedia";
         const dotColor = isTersedia ? "bg-[#34C759]" : "bg-[#FF3B30]";
         const textLabel = isTersedia ? "Tersedia" : "Dipinjam";
+        const textPeminjam = isTersedia ? '<span class="text-gray-400">-</span>' : `<span class="font-semibold text-[#007AFF]">${b.peminjam}</span>`;
         
         tbody.innerHTML += `
-          <tr class="hover:bg-gray-50/50 transition">
+          <tr class="hover:bg-gray-50/50 transition border-b border-gray-50 last:border-0">
             <td class="p-4 text-[13px] font-mono text-gray-400">${b.id}</td>
-            <td class="p-4 font-medium text-gray-800">${b.nama}</td>
-            <td class="p-4 text-right">
+            <td class="p-4 font-medium text-gray-800 whitespace-nowrap">${b.nama}</td>
+            <td class="p-4 text-[13px] whitespace-nowrap">${textPeminjam}</td>
+            <td class="p-4 text-right whitespace-nowrap">
               <div class="inline-flex items-center space-x-2">
                 <span class="w-2 h-2 rounded-full ${dotColor}"></span>
                 <span class="text-[13px] font-medium text-gray-600">${textLabel}</span>
